@@ -1,0 +1,9 @@
+{
+  "title": "Personal Diary",
+  "description": "Jags Personal Diary",
+  "icon": "BookMarked",
+  "pages": [
+    "introduction",
+    "testing"
+  ]
+}
