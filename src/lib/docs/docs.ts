@@ -1,5 +1,5 @@
 import { docsCollection } from '@/../.source'
-import { createOpenAPI, attachFile } from 'fumadocs-openapi/server'
+import { attachFile } from 'fumadocs-openapi/server'
 import { loader } from 'fumadocs-core/source'
 import { icons } from 'lucide-react'
 import { createElement } from 'react'
