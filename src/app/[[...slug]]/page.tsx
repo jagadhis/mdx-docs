@@ -24,7 +24,6 @@ export default async function Page(props: DocsPageProps) {
   }
 
   const MDX = page.data.body
-  console.log(MDX)
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full} article={{ className: 'gap-4' }}>
