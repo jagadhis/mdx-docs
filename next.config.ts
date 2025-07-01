@@ -2,6 +2,7 @@ import { createMDX } from 'fumadocs-mdx/next'
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  basePath: '/personal-diary',
   output: 'standalone',
   productionBrowserSourceMaps: process.env.PROFILE !== 'prod',
   poweredByHeader: false,
