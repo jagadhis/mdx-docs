@@ -1,6 +1,6 @@
 // @ts-nocheck -- skip type checking
-import * as docsCollection_1 from "../src/content/docs/(docs)/testing/testing-docs.mdx?collection=docsCollection&hash=1751345760550"
-import * as docsCollection_0 from "../src/content/docs/(docs)/introduction.mdx?collection=docsCollection&hash=1751345760550"
+import * as docsCollection_1 from "../src/content/docs/(docs)/testing/testing-docs.mdx?collection=docsCollection&hash=1751345760549"
+import * as docsCollection_0 from "../src/content/docs/(docs)/introduction.mdx?collection=docsCollection&hash=1751345760549"
 import { _runtime } from "fumadocs-mdx"
 import * as _source from "../source.config"
 export const docsCollection = _runtime.docs<typeof _source.docsCollection>([{ info: {"path":"(docs)/introduction.mdx","absolutePath":"/Users/jagsd/projects/mdx-docs/src/content/docs/(docs)/introduction.mdx"}, data: docsCollection_0 }, { info: {"path":"(docs)/testing/testing-docs.mdx","absolutePath":"/Users/jagsd/projects/mdx-docs/src/content/docs/(docs)/testing/testing-docs.mdx"}, data: docsCollection_1 }], [{"info":{"path":"(docs)/meta.json","absolutePath":"/Users/jagsd/projects/mdx-docs/src/content/docs/(docs)/meta.json"},"data":{"title":"Personal Diary","pages":["introduction","testing"],"description":"Jags Personal Diary","icon":"BookMarked"}}, {"info":{"path":"(docs)/testing/meta.json","absolutePath":"/Users/jagsd/projects/mdx-docs/src/content/docs/(docs)/testing/meta.json"},"data":{"title":"testing","pages":["testing-docs"],"description":"Testing the first docs","icon":"Zap"}}])
