@@ -4,6 +4,7 @@
   "icon": "BookMarked",
   "pages": [
     "introduction",
-    "testing"
+    "testing",
+    "docs-editor"
   ]
 }

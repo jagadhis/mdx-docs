@@ -1,26 +1,41 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Eye } from 'lucide-react';
 import type { PreviewProps } from '@/lib/types';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 export const MDXPreview = ({ content }: PreviewProps) => {
-  const [cachedSource, setCachedSource] = useState<any>(null);
+  const [cachedSource, setCachedSource] = useState<MDXRemoteSerializeResult | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const mdxSource = useMemo(() => {
-    if (!content.trim()) return null;
+  useEffect(() => {
+    if (!content.trim()) {
+      setCachedSource(null);
+      return;
+    }
 
+    setLoading(true);
     const timeoutId = setTimeout(() => {
       serialize(content)
-        .then(source => setCachedSource(source))
-        .catch(() => setCachedSource(null));
+        .then(source => {
+          setCachedSource(source);
+          setLoading(false);
+        })
+        .catch(() => {
+          setCachedSource(null);
+          setLoading(false);
+        });
     }, 300);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+      setLoading(false);
+    };
   }, [content]);
 
   return (
@@ -36,6 +51,8 @@ export const MDXPreview = ({ content }: PreviewProps) => {
           <div className="p-6 prose prose-sm max-w-none dark:prose-invert prose-gray">
             {cachedSource ? (
               <MDXRemote {...cachedSource} />
+            ) : loading ? (
+              <div className="text-muted-foreground italic">Rendering preview...</div>
             ) : content.trim() ? (
               <div className="text-muted-foreground italic">Rendering preview...</div>
             ) : (

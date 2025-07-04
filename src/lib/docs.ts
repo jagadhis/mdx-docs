@@ -43,6 +43,30 @@ const updateCategoryMeta = (baseDir: string, category: string, slug: string): Pr
     });
 };
 
+const updateRootMeta = (baseDir: string, category: string): Promise<void> => {
+  const rootMetaPath = join(baseDir, 'meta.json');
+
+  return readFile(rootMetaPath, 'utf-8')
+    .then(content => JSON.parse(content) as CategoryMeta)
+    .then(meta => {
+      if (!meta.pages.includes(category)) {
+        meta.pages.push(category);
+        return writeFile(rootMetaPath, JSON.stringify(meta, null, 2), 'utf-8');
+      }
+      return Promise.resolve();
+    })
+    .catch(() => {
+      console.warn('Root meta.json not found, creating new one');
+      const newRootMeta: CategoryMeta = {
+        title: "Documentation",
+        description: "Platform documentation",
+        icon: "BookMarked",
+        pages: [category]
+      };
+      return writeFile(rootMetaPath, JSON.stringify(newRootMeta, null, 2), 'utf-8');
+    });
+};
+
 const removeDraftMeta = (category: string, slug: string): Promise<void> => {
   const categoryMetaPath = join(DRAFTS_DIR, category, 'meta.json');
 
@@ -91,6 +115,7 @@ export const publishDoc = (slug: string, category: string): Promise<void> => {
         .then(() => Promise.all([
           writeFile(publishPath, content, 'utf-8'),
           updateCategoryMeta(DOCS_DIR, category, slug),
+          updateRootMeta(DOCS_DIR, category),
           deleteDraft(slug, category)
         ]))
     )

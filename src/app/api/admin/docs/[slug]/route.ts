@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPublishedDoc } from '@/lib/docs';
 import type { ApiResponse, DocContent } from '@/lib/types';
 
-export const GET = (
+export const GET = async (
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse> => {
-  const { slug } = params;
+  const { slug } = await params;
   const url = new URL(request.url);
   const category = url.searchParams.get('category');
 
   if (!category) {
     const response: ApiResponse = { success: false, error: 'Category parameter is required' };
-    return Promise.resolve(NextResponse.json(response, { status: 400 }));
+    return NextResponse.json(response, { status: 400 });
   }
 
   return getPublishedDoc(slug, category)

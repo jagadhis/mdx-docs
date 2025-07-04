@@ -37,7 +37,9 @@ export const DocManager = () => {
   }, []);
 
   useState(() => {
-    loadDrafts();
+    if (typeof window !== 'undefined') {
+      loadDrafts();
+    }
   });
 
   const publishDoc = useCallback((slug: string, category: string): void => {
