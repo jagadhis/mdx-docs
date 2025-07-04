@@ -1,0 +1,8 @@
+{
+  "title": "Doc-editor",
+  "description": "doc-editor documentation",
+  "icon": "BookMarked",
+  "pages": [
+    "doc-editor-update"
+  ]
+}
