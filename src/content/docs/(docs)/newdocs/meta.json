@@ -1,0 +1,8 @@
+{
+  "title": "Doc-editor",
+  "description": "Doc-editor documentation",
+  "icon": "User",
+  "pages": [
+    "new-docs"
+  ]
+}
