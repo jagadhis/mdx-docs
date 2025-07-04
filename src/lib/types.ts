@@ -16,6 +16,13 @@ export type DocMetadata = {
   readonly updatedAt: string;
 }
 
+export type MetaJsonEntry = {
+  readonly title: string;
+  readonly description: string;
+  readonly icon?: string;
+  readonly pages: string[];
+}
+
 export type DocContent = {
   readonly metadata: DocMetadata;
   readonly content: string;
