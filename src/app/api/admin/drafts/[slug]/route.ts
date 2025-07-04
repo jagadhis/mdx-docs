@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDraft, deleteDraft } from '@/lib/docs';
+import { getDraft, deleteDraft } from '@/lib/draft-operations';
 import type { ApiResponse, DocContent } from '@/lib/types';
 
 export const GET = async (

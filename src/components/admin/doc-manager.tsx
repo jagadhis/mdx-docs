@@ -2,9 +2,16 @@
 
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,31 +22,66 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Edit, Globe, Plus, Trash2, AlertTriangle, Clock, Folder, Hash } from 'lucide-react';
+import {
+  Edit,
+  Globe,
+  Plus,
+  Trash2,
+  AlertTriangle,
+  ExternalLink,
+  GitBranch,
+  History,
+  RefreshCw
+} from 'lucide-react';
 import type { DocMetadata } from '@/lib/types';
 
+type EnhancedDocMetadata = DocMetadata & {
+  prNumber?: number;
+  branchName?: string;
+  prUrl?: string;
+};
+
 export const DocManager = () => {
-  const [drafts, setDrafts] = useState<DocMetadata[]>([]);
+  const [allDocs, setAllDocs] = useState<EnhancedDocMetadata[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [deleting, setDeleting] = useState<string>('');
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
-    doc: DocMetadata | null;
+    doc: EnhancedDocMetadata | null;
   }>({ open: false, doc: null });
 
-  const loadDrafts = useCallback(() => {
+  const loadAllDocs = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
     setLoading(true);
-    fetch('/api/admin/drafts')
-      .then(response => response.json())
-      .then(data => data.success ? setDrafts(data.data) : console.error(data.error))
-      .catch(error => console.error('Failed to load drafts:', error))
+
+    Promise.all([
+      fetch('/api/admin/drafts').then(res => res.json()),
+      fetch('/api/admin/docs').then(res => res.json())
+    ])
+      .then(([draftsResponse, publishedResponse]) => {
+        const drafts = draftsResponse.success ? draftsResponse.data : [];
+        const published = publishedResponse.success ? publishedResponse.data : [];
+
+        const enhancedDrafts = drafts.map((draft: DocMetadata & { prNumber?: number; branchName?: string }) => ({
+          ...draft,
+          prUrl: draft.prNumber ? `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_OWNER}/${process.env.NEXT_PUBLIC_GITHUB_REPO}/pull/${draft.prNumber}` : undefined
+        }));
+
+        const combinedDocs = [...enhancedDrafts, ...published]
+          .sort((a, b) => {
+            if (a.category !== b.category) return a.category.localeCompare(b.category);
+            return a.title.localeCompare(b.title);
+          });
+
+        setAllDocs(combinedDocs);
+      })
+      .catch(error => console.error('Failed to load docs:', error))
       .finally(() => setLoading(false));
   }, []);
 
   useState(() => {
-    if (typeof window !== 'undefined') {
-      loadDrafts();
-    }
+    loadAllDocs();
   });
 
   const publishDoc = useCallback((slug: string, category: string): void => {
@@ -51,15 +93,15 @@ export const DocManager = () => {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          setDrafts(prev => prev.filter(draft => draft.slug !== slug));
+          loadAllDocs();
         } else {
           console.error('Failed to publish:', data.error);
         }
       })
       .catch(error => console.error('Publish error:', error));
-  }, []);
+  }, [loadAllDocs]);
 
-  const confirmDelete = useCallback((doc: DocMetadata): void => {
+  const confirmDelete = useCallback((doc: EnhancedDocMetadata): void => {
     setDeleteDialog({ open: true, doc });
   }, []);
 
@@ -75,51 +117,65 @@ export const DocManager = () => {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          setDrafts(prev => prev.filter(draft => draft.slug !== slug));
           setDeleteDialog({ open: false, doc: null });
+          loadAllDocs();
         } else {
           console.error('Failed to delete:', data.error);
         }
       })
       .catch(error => console.error('Delete error:', error))
       .finally(() => setDeleting(''));
-  }, [deleteDialog.doc]);
+  }, [deleteDialog.doc, loadAllDocs]);
 
   const cancelDelete = useCallback((): void => {
     setDeleteDialog({ open: false, doc: null });
   }, []);
 
+  const getStatusBadge = (doc: EnhancedDocMetadata) => {
+    if (doc.status === 'draft') {
+      return (
+        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+          Draft
+        </Badge>
+      );
+    }
+    return (
+      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+        Published
+      </Badge>
+    );
+  };
+
   if (loading) {
     return (
       <div className="space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="border-muted">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-2 flex-1">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-3 w-16" />
-                    <Skeleton className="h-3 w-20" />
-                    <Skeleton className="h-3 w-12" />
-                  </div>
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-80" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-24" />
+            <Skeleton className="h-9 w-32" />
+          </div>
+        </div>
+        <div className="border rounded-lg">
+          <div className="p-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between py-3 border-b last:border-b-0">
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-48" />
+                  <Skeleton className="h-4 w-32" />
                 </div>
-                <Skeleton className="h-5 w-12" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-32" />
-                <div className="flex space-x-2">
-                  <Skeleton className="h-9 w-16" />
-                  <Skeleton className="h-9 w-20" />
-                  <Skeleton className="h-9 w-18" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-6 w-16" />
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-8 w-20" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -129,122 +185,149 @@ export const DocManager = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Document Manager</h2>
-            <p className="text-muted-foreground">Manage your documentation drafts and published content</p>
+            <h2 className="text-2xl font-bold tracking-tight">Documentation</h2>
+            <p className="text-muted-foreground">All documentation in the repository</p>
           </div>
-          <Button onClick={() => window.open('/admin/editor', '_blank')} className="shadow-sm">
-            <Plus className="mr-2 h-4 w-4" />
-            New Document
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={loadAllDocs}
+              variant="outline"
+              size="sm"
+              disabled={loading}
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button onClick={() => window.open('/admin/editor', '_blank')}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Document
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-4">
-          {drafts.map(draft => (
-            <Card key={`${draft.category}-${draft.slug}`} className="hover:shadow-md transition-all duration-200 border-muted">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <CardTitle className="text-lg">{draft.title}</CardTitle>
-                      <Badge variant="secondary" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                        draft
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-muted-foreground">{draft.description}</div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="inline-flex items-center gap-1">
-                        <Folder className="h-3 w-3" />
-                        {draft.category}
-                      </span>
-                      {draft.icon && (
-                        <span className="inline-flex items-center gap-1">
-                          🎨 {draft.icon}
-                        </span>
+        <div className="border rounded-lg">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Document</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Updated</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {allDocs.map(doc => (
+                <TableRow key={`${doc.category}-${doc.slug}`} className="hover:bg-muted/50">
+                  <TableCell>
+                    <div className="space-y-1">
+                      <div className="font-medium">{doc.title}</div>
+                      {doc.description && (
+                        <div className="text-sm text-muted-foreground line-clamp-1">
+                          {doc.description}
+                        </div>
                       )}
-                      <span className="inline-flex items-center gap-1 font-mono text-xs">
-                        <Hash className="h-3 w-3" />
-                        {draft.slug}
-                      </span>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="font-mono">{doc.slug}</span>
+                        {doc.branchName && (
+                          <div className="flex items-center gap-1">
+                            <GitBranch className="h-3 w-3" />
+                            <span className="font-mono">{doc.branchName}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex items-center gap-1 text-sm text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    Updated {new Date(draft.updatedAt).toLocaleDateString()}
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(`/admin/editor?slug=${draft.slug}&category=${draft.category}`, '_blank')}
-                      className="shadow-sm"
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => publishDoc(draft.slug, draft.category)}
-                      className="shadow-sm"
-                    >
-                      <Globe className="mr-2 h-4 w-4" />
-                      Publish
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => confirmDelete(draft)}
-                      disabled={deleting === draft.slug}
-                      className="shadow-sm"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      {deleting === draft.slug ? 'Deleting...' : 'Delete'}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="text-xs">
+                      {doc.category}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(doc)}
+                      {doc.prNumber && (
+                        <a
+                          href={doc.prUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                        >
+                          PR #{doc.prNumber}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {new Date(doc.updatedAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.open(`/admin/history?slug=${doc.slug}&category=${doc.category}`, '_blank')}
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.open(`/admin/editor?slug=${doc.slug}&category=${doc.category}`, '_blank')}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      {doc.status === 'draft' && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => publishDoc(doc.slug, doc.category)}
+                          >
+                            <Globe className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => confirmDelete(doc)}
+                            disabled={deleting === doc.slug}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
 
-          {drafts.length === 0 && (
-            <Card className="border-dashed border-2 border-muted">
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                  <Plus className="h-6 w-6 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">No drafts available</h3>
-                <p className="text-muted-foreground mb-4 text-center max-w-sm">
-                  Get started by creating your first document. You can write, edit, and publish documentation easily.
-                </p>
-                <Button onClick={() => window.open('/admin/editor', '_blank')}>
-                  Create your first document
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+              {allDocs.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-12">
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground">No documentation found</p>
+                      <Button onClick={() => window.open('/admin/editor', '_blank')} variant="outline">
+                        Create your first document
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
 
       <AlertDialog open={deleteDialog.open} onOpenChange={cancelDelete}>
-        <AlertDialogContent className="border-muted">
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-destructive" />
               Delete Draft
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &#34;{deleteDialog.doc?.title}&#34;? This action cannot be undone.
-              <br />
-              <br />
-              <strong>This will permanently remove:</strong>
-              <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                <li>The MDX file: <code className="bg-muted px-1 py-0.5 rounded text-xs">{deleteDialog.doc?.slug}.mdx</code></li>
-                <li>Entry from category meta.json</li>
-                <li>All content and metadata</li>
-              </ul>
+              Are you sure you want to delete &#34;{deleteDialog.doc?.title}&#34;? This will close the PR and delete the branch.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -253,7 +336,7 @@ export const DocManager = () => {
               onClick={executeDeletion}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete Permanently
+              Delete Draft
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

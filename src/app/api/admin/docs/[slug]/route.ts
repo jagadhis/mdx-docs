@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPublishedDoc } from '@/lib/docs';
+import { getPublishedDoc } from '@/lib/publish-operations';
 import type { ApiResponse, DocContent } from '@/lib/types';
 
 export const GET = async (
