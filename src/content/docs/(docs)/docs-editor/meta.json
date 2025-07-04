@@ -3,6 +3,7 @@
   "description": "docs-editor documentation",
   "icon": "BookMarked",
   "pages": [
-    "docs-editor"
+    "docs-editor",
+    "docs-editor-update"
   ]
 }
