@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { publishDoc } from '@/lib/docs';
+import { publishDoc } from '@/lib/publish-operations';
 import type { ApiResponse } from '@/lib/types';
 
 type PublishRequest = {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPublishedDocs } from '@/lib/docs';
+import { getPublishedDocs } from '@/lib/publish-operations';
 import type { ApiResponse, DocMetadata } from '@/lib/types';
 
 export const GET = (): Promise<NextResponse> => {
