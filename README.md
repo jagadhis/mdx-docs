@@ -1,19 +1,24 @@
 # mdx-docs
 
-mdx-docs is a documentation system built with Next.js, designed to leverage MDX (Markdown with JSX) and GitHub as a CMS for managing and editing documentation content. This project aims to make it easy for developers and teams to write, manage, and deploy documentation with a modern, developer-friendly workflow.
+mdx-docs is a documentation system built with Next.js, MDX, and a GitHub-based CMS, designed for easy authoring, editing, and deployment of technical documentation. This project is already deployed and live—see the link below!
+
+## Live Demo
+
+Check out the deployed documentation site here:  
+**[mdx-docs Live Site](https://vault.thedevjags.com)**
 
 ## Features
 
-- **Next.js Powered**: Utilizes the latest features and optimizations from Next.js for fast, scalable, and SEO-friendly documentation sites.
-- **MDX Support**: Write documentation using MDX, allowing you to blend Markdown content with React components for interactive and dynamic docs.
-- **GitHub-based CMS**: Manage your documentation directly from your GitHub repository. All docs and content changes are tracked with Git, making collaboration and version control seamless.
-- **Live Editing**: Edit your documentation in real-time by modifying files like `app/page.tsx`. The application auto-updates as you save changes.
-- **Font Optimization**: Uses `next/font` to automatically load and optimize the Geist font family from Vercel, ensuring clean and readable typography.
-- **Easy Deployment**: Designed for effortless deployment on Vercel, the platform created by the Next.js team, with out-of-the-box support for preview and production environments.
+- **Next.js Powered**: Fast, modern, and SEO-friendly documentation site.
+- **MDX Support**: Write docs in Markdown with embedded React components.
+- **GitHub CMS**: Manage and version docs directly from your GitHub repository.
+- **Live Editing**: Edit files like `app/page.tsx` and see instant updates.
+- **Optimized Fonts**: Uses Vercel’s Geist font for clean, readable docs.
+- **Easy Deployment**: Built for seamless deployment on Vercel.
 
-## Getting Started
+## Getting Started Locally
 
-To run the project locally:
+To run the project on your machine:
 
 ```bash
 npm run dev
@@ -25,44 +30,43 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the documentation site in action.
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Editing Documentation
+## Editing Documentation
 
-- Start editing the main page by modifying `app/page.tsx`.
-- All content is hot-reloaded, so you’ll see updates instantly as you edit files.
+- Main page: Edit `app/page.tsx`
+- All changes are hot-reloaded for instant feedback.
 
-### Folder Structure
+## Folder Structure
 
-- `.source/` – Contains the source files for the documentation system and GitHub CMS integration.
-- `public/` – Static assets like favicon and images.
-- `src/` – Main source code for the Next.js application.
-- Additional config files for linting, TypeScript, PostCSS, and more.
+- `.source/` – Source files for the docs system and GitHub CMS integration
+- `public/` – Static assets
+- `src/` – Main Next.js app code
 
 ## Deployment
 
-The easiest way to deploy your documentation site is through [Vercel](https://vercel.com/). You can set up automatic deployments from your GitHub repository for both preview and production environments.
+This project is already deployed at [vault.thedevjags.com](https://vault.thedevjags.com).  
+For your own deployment, connect your repo to [Vercel](https://vercel.com/) for automatic builds and previews.
 
 ## Tech Stack
 
-- **TypeScript**: For type-safe development.
-- **Next.js**: The core React framework.
-- **MDX**: For writing rich, interactive documentation.
-- **CSS**: For styling.
-- **GitHub**: As a headless CMS and version control system.
+- **TypeScript**
+- **Next.js**
+- **MDX**
+- **CSS**
+- **GitHub**
 
 ## Contributing
 
-Feedback and contributions are welcome! Please open issues or pull requests if you have suggestions or improvements.
+Contributions and feedback are welcome! Open an issue or pull request to get involved.
 
 ## License
 
-This project is open source and available under the MIT License.
+MIT
 
 ---
 
-For more information, check out:
+For more info, see:
 
 - [Next.js Documentation](https://nextjs.org/docs)
-- [Learn Next.js](https://nextjs.org/learn)
 - [MDX Documentation](https://mdxjs.com/)
