@@ -1,8 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# mdx-docs
+
+mdx-docs is a documentation system built with Next.js, designed to leverage MDX (Markdown with JSX) and GitHub as a CMS for managing and editing documentation content. This project aims to make it easy for developers and teams to write, manage, and deploy documentation with a modern, developer-friendly workflow.
+
+## Features
+
+- **Next.js Powered**: Utilizes the latest features and optimizations from Next.js for fast, scalable, and SEO-friendly documentation sites.
+- **MDX Support**: Write documentation using MDX, allowing you to blend Markdown content with React components for interactive and dynamic docs.
+- **GitHub-based CMS**: Manage your documentation directly from your GitHub repository. All docs and content changes are tracked with Git, making collaboration and version control seamless.
+- **Live Editing**: Edit your documentation in real-time by modifying files like `app/page.tsx`. The application auto-updates as you save changes.
+- **Font Optimization**: Uses `next/font` to automatically load and optimize the Geist font family from Vercel, ensuring clean and readable typography.
+- **Easy Deployment**: Designed for effortless deployment on Vercel, the platform created by the Next.js team, with out-of-the-box support for preview and production environments.
 
 ## Getting Started
 
-First, run the development server:
+To run the project locally:
 
 ```bash
 npm run dev
@@ -14,23 +25,44 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the documentation site in action.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Editing Documentation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Start editing the main page by modifying `app/page.tsx`.
+- All content is hot-reloaded, so you’ll see updates instantly as you edit files.
 
-## Learn More
+### Folder Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `.source/` – Contains the source files for the documentation system and GitHub CMS integration.
+- `public/` – Static assets like favicon and images.
+- `src/` – Main source code for the Next.js application.
+- Additional config files for linting, TypeScript, PostCSS, and more.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The easiest way to deploy your documentation site is through [Vercel](https://vercel.com/). You can set up automatic deployments from your GitHub repository for both preview and production environments.
 
-## Deploy on Vercel
+## Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **TypeScript**: For type-safe development.
+- **Next.js**: The core React framework.
+- **MDX**: For writing rich, interactive documentation.
+- **CSS**: For styling.
+- **GitHub**: As a headless CMS and version control system.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contributing
+
+Feedback and contributions are welcome! Please open issues or pull requests if you have suggestions or improvements.
+
+## License
+
+This project is open source and available under the MIT License.
+
+---
+
+For more information, check out:
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [MDX Documentation](https://mdxjs.com/)
